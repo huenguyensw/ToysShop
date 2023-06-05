@@ -6,6 +6,8 @@ import {ProductWrapper, Image, InputLabel, StyleInputs, ButtonWrapper, BackButto
 
 const CreateProduct: React.FC = () => {
   const [fileImage, setFileImage] = useState<any>({});
+  
+  
   const [inputs, setInputs] = useState<any>({});
   const URL = 'http://localhost:3000/toys';
   const [image, setImage] = useState<any>('');
@@ -31,7 +33,7 @@ const CreateProduct: React.FC = () => {
   }
 
   const handleCreatingProduct = async (e: any) => {
-    e.preventDeafult();
+    e.preventDefault();
     var formData = new FormData();
     formData.append('ToyImage', fileImage);
     formData.append('title', inputs.title);
@@ -45,14 +47,12 @@ const CreateProduct: React.FC = () => {
         "Content-Type": "multipart/form-data"
       }
     }
+    
 
     const res = await axios.post(URL, formData, config);
-
-
-    navigate('/admin/manageProduct')
-    console.log(res)
-
-
+    
+    console.log(res);
+    navigate('/admin/manageProduct');
 
   }
 
@@ -63,7 +63,7 @@ const CreateProduct: React.FC = () => {
       <StyleInputs onSubmit={handleCreatingProduct}>
         {image == '' || image == null
           ? ""
-          : <img src={image} width={250} height={250} alt='product-image'></img>}
+          : <img src={image} width={450} height={400} alt='product-image'></img>}
         <Image>
           Upload image file:
           <br />
@@ -72,7 +72,7 @@ const CreateProduct: React.FC = () => {
         <InputLabel>
           Title:
           <br />
-          <input type='text' value={inputs.title} onChange={handleChange} required />
+          <input type='text' name = 'title' value={inputs.title} onChange={handleChange} required />
         </InputLabel>
 
         <InputLabel>
@@ -84,19 +84,19 @@ const CreateProduct: React.FC = () => {
         <InputLabel>
           Price(kr):
           <br />
-          <input type='text' value={inputs.price} onChange={handleChange} required />
+          <input type='text' name='price' value={inputs.price} onChange={handleChange} required />
         </InputLabel>
 
         <InputLabel>
           Quantity:
           <br />
-          <input type='text' value={inputs.quantity} onChange={handleChange} required />
+          <input type='text' name='quantity' value={inputs.quantity} onChange={handleChange} required />
         </InputLabel>
 
         <InputLabel>
           forObject:
           <br />
-          <input type='text' value={inputs.forObject} onChange={handleChange} required />
+          <input type='text' name='forObject' value={inputs.forObject} onChange={handleChange} required />
         </InputLabel>
 
         <ButtonWrapper>

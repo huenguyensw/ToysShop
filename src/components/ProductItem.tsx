@@ -19,13 +19,13 @@ const ProductItem: React.FC<{ product: any, url: string, multipleview: string }>
   }
 
   return (
-    <ProductBox>
-      <ProductImage src={`${url}uploads/${endPoint}`} alt='imageproduct' />
+    <ProductBox className={multipleview ==='true' ? undefined : 'singlebox'}>
+      <ProductImage src={`${url}uploads/${endPoint}`} alt='imageproduct' className={multipleview ==='true' ? undefined : 'singleMode'} />
       <ProductName>
         {product.title.length <= 18 ? product.title : <span>{product.title.substring(0, 15)}...</span>} {product.quantity <= 0 && <span style={{ color: 'red', fontSize: 14 }}>Out-of-stock</span>}
         {product.title.length > 18 &&<Tooltip className='Tooltip'>{product.title}</Tooltip>}
       </ProductName>
-      {multipleview === 'false' && <p>{product.description}</p>}
+      {multipleview === 'false' && <ProductDescription rows={10} cols={60} readOnly>{product.description}</ProductDescription>}
       <p>Price:  {product.price} kr</p>
       <p>Age: {product.forObject}</p>
 
@@ -35,7 +35,7 @@ const ProductItem: React.FC<{ product: any, url: string, multipleview: string }>
           <Link to={`/products/${product._id}`}>Read more...</Link>
           <br />
         </>)}
-      <QuantitySection>
+      <QuantitySection className={multipleview ==='true' ? undefined : 'QuantitySingleView'}>
         <ChangeQuantityBtn onClick={handleIncrementQuantity}>+</ChangeQuantityBtn>
         <QuantityField type='text' value={quantity} onChange={handleNumberOfItem}></QuantityField>
         <ChangeQuantityBtn onClick={handleDecrementQuantity}>-</ChangeQuantityBtn>
@@ -53,7 +53,15 @@ border-radius: 2px;
 text-align: left;
 color: #1177a6; 
 font-size: 1.1rem;
-line-height: 0.5rem;`
+line-height: 0.5rem;
+&.singlebox{
+  width: unset;
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 1rem;
+  border-bottom: 1.5px solid;
+  border-top: 1.5px solid;
+}`
 
 const ProductName = styled.h2`
 position: relative;
@@ -61,6 +69,13 @@ position: relative;
   visibility: visible;
 }
 `
+
+const ProductDescription = styled.textarea`
+background-color: #d6edf5;
+border:none;
+font-size: 1.3rem;
+overflow: auto;
+color: #1177a6;`
 
 const Tooltip = styled.span`
 visibility: hidden;
@@ -86,7 +101,11 @@ left: 30%;
 const ProductImage = styled.img`
 width: 250px;
 height: 250px;
-object-fit: cover;`
+object-fit: cover;
+&.singleMode{
+  width: unset;
+  height: unset;
+}`
 
 const AddToCartBtn = styled.button`
 background-color:unset;
@@ -120,5 +139,8 @@ display: flex;
 flex-direction: row;
 justify-content: left;
 align-items: center;
-padding-left: 0`
+padding-left: 0;
+&.QuantitySingleView{
+  justify-content: center;
+}`
 export default ProductItem

@@ -1,17 +1,38 @@
-import React from 'react'
+import React,{useState, useEffect} from 'react'
 import useFetchAllProducts from '../useFetchAllProducts'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import axios from 'axios'
 
 const ManageProducts: React.FC = () => {
-  const { data: products, isError, isLoading } = useFetchAllProducts({ url: 'http://localhost:3000/toys' })
+  const URL = 'http://localhost:3000/toys';
+  const { data, isError, isLoading } = useFetchAllProducts({ url: URL })
+  const [products, setProducts] = useState<any[]>([]);
+
+  useEffect(()=>{
+    if(data){
+      setProducts(data);
+    }
+    console.log(data)
+  },[data])
+
+  const removeProduct = async (id:any) =>{
+    try{
+      const res = await axios.delete(`${URL}/${id}`);
+      if(res.status !== 200){
+        throw new Error('Error when deleting product'+ res.status);
+      }
+      setProducts(products.filter((product:any) => product._id !== id))
+    }catch(error){
+      console.log(error);
+    }
+  }
   return (
     <HeaderContent>
       <HeaderSection>
         <h2>Manage Products</h2>
         <CreateLink to={"/admin/addProduct"}>Create Product</CreateLink>
       </HeaderSection>
-      <div>
         {isLoading
           ? <h1>Loading...</h1>
           : isError
@@ -41,14 +62,13 @@ const ManageProducts: React.FC = () => {
                         <TableData>{product.forObject}</TableData>
                         <TableData>{product.date}</TableData>
                         <EditLink to={"/admin/updateProduct/" + `${product._id}`}>Edit</EditLink>
-                        <DeleteButton>Delete</DeleteButton>
+                        <DeleteButton onClick={()=>removeProduct(product._id)}>Delete</DeleteButton>
                       </TableRow>
                     )
                   }
                   )}
               </tbody>
             </Table>)}
-      </div>
     </HeaderContent>
   )
 }
@@ -99,6 +119,7 @@ text-decoration: none;
 border: none;
 font-size: 1.1rem;
 color: #1177a6;
-background-color: unset;`
+background-color: unset;
+&:focus{outline:none};`
 
 export default ManageProducts

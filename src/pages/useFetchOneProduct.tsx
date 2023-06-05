@@ -1,7 +1,7 @@
 import  { useEffect, useState } from 'react'
 
 const useFetchOneProduct = ({URL}:{URL:string}) => {
-    const [data, setData] = useState({});
+    const [data, setData] = useState<any>({});
     const [isError, setIsError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 

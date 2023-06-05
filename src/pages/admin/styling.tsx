@@ -6,7 +6,6 @@ export const ProductWrapper = styled.div`
     width: 50%;
     border-radius: 10px;
     padding: 0px 40px;
-    border: 1px solid #e5e5e5;
     background-color: white;
     align-items: center;
     text-align: center;
@@ -102,3 +101,4 @@ export const ButtonWrapper = styled.div`
   margin: 5px;
   padding: 5px;
 `;
+
