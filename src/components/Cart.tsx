@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components';
 import ClearIcon from '@mui/icons-material/Clear';
-import { ConstructionOutlined } from '@mui/icons-material';
+
 
 const Cart: React.FC<{ lineItems: any, totalPrice: any, setLineItems: any, setToggle:any, setAmountOfItems:any }> = ({ lineItems, totalPrice, setLineItems, setToggle,setAmountOfItems }) => {
   const url = 'https://database-ecommerce-production.up.railway.app/'
