@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import axios from 'axios'
 
 const ManageProducts: React.FC = () => {
-  const URL = 'http://localhost:3000/toys';
+  const URL = 'https://database-ecommerce-production.up.railway.app/toys';
   const { data, isError, isLoading } = useFetchAllProducts({ url: URL })
   const [products, setProducts] = useState<any[]>([]);
 
@@ -13,7 +13,6 @@ const ManageProducts: React.FC = () => {
     if(data){
       setProducts(data);
     }
-    console.log(data)
   },[data])
 
   const removeProduct = async (id:any) =>{
@@ -51,7 +50,11 @@ const ManageProducts: React.FC = () => {
               </thead>
               <tbody>
                 {products.length == 0
-                  ? <h1>No product is available!</h1>
+                  ? <tr>
+                      <td>
+                      No product is available!
+                      </td>
+                  </tr>
                   : products.map((product: any) => {
                     return (
                       <TableRow key={product._id}>
@@ -61,8 +64,10 @@ const ManageProducts: React.FC = () => {
                         <TableData>{product.quantity}</TableData>
                         <TableData>{product.forObject}</TableData>
                         <TableData>{product.date}</TableData>
-                        <EditLink to={"/admin/updateProduct/" + `${product._id}`}>Edit</EditLink>
-                        <DeleteButton onClick={()=>removeProduct(product._id)}>Delete</DeleteButton>
+                        <TableData>
+                          <EditLink to={"/admin/updateProduct/" + `${product._id}`}>Edit</EditLink>
+                          <DeleteButton onClick={() => removeProduct(product._id)}>Delete</DeleteButton>
+                        </TableData>
                       </TableRow>
                     )
                   }

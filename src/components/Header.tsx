@@ -3,12 +3,16 @@ import styled from "styled-components"
 import { Badge } from '@mui/material';
 import { ShoppingCart } from '@mui/icons-material';
 
-const Header = () => {
+const Header: React.FC<{amount: any, toggle:any, setToggle: any}> = ({amount, toggle, setToggle}) => {
+  const handleClick = () =>{
+    setToggle(true);
+    console.log(toggle);
+  }
   return (
     <HeaderSection>
       <Navigation />
-      <Button>
-        <Badge color="secondary">
+      <Button onClick={handleClick}>
+        <Badge color="error" badgeContent={amount} >
           <ShoppingCart />
         </Badge>
       </Button>

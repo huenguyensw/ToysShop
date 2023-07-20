@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 const Products: React.FC = () => {
-  const url = 'http://localhost:3000/'
-  const {data:products, isError,isLoading} = useFetchAllProducts({url: 'http://localhost:3000/toys'})
+  const url = 'https://database-ecommerce-production.up.railway.app/'
+  const {data:products, isError,isLoading} = useFetchAllProducts({url: 'https://database-ecommerce-production.up.railway.app/toys'})
   return (
     <Main>
       <BannerBox>

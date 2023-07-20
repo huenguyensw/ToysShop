@@ -6,12 +6,12 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const UpdateProduct: React.FC = () => {
-  const url = 'http://localhost:3000/';
+  const url = 'https://database-ecommerce-production.up.railway.app/';
   const Params = useParams();
   const { data: product, isLoading, isError } = useFetchOneProduct({ URL: `${url}toys/${Params.id}` })
-  const [inputs, setInputs] = useState<any>(null);
+  const [inputs, setInputs] = useState<any>();
   const [fileImage, setFileImage] = useState<any>({});
-  const [image, setImage] = useState<any>(null);
+  const [image, setImage] = useState<any>('');
   const navigate = useNavigate();
 
 
@@ -19,6 +19,7 @@ const UpdateProduct: React.FC = () => {
     if (product) {
       setInputs(product);
       setImage(encodeURI(product.image))
+      console.log(product.image)
     }
   }, [product]);
 
@@ -27,7 +28,8 @@ const UpdateProduct: React.FC = () => {
   }
 
   const handleFiles = (e: any) => {
-    setFileImage(e.target.files[0]);
+    setFileImage(e.target.files[0].name);
+    console.log(e.target.files[0].name);
 
     //render image
     var reader = new FileReader();
@@ -78,9 +80,9 @@ const UpdateProduct: React.FC = () => {
         : isError
           ? <h1>{isError}</h1>
           : <ProductWrapper>
-            <h2>Create Product</h2>
+            <h2>Update Product</h2>
             <StyleInputs onSubmit={handleCreatingProduct}>
-              {image == '' || image == null
+              {image == '' || image == null || image == undefined
                 ? ""
                 : <img src={`${url}uploads/${image}`} width={450} height={400} alt='product-image'></img>}
               <Image>

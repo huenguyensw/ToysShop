@@ -5,7 +5,7 @@ import ProductItem from '../components/ProductItem';
 
 const Product: React.FC = () => {
   const  Params = useParams();
-  const url = 'http://localhost:3000/'
+  const url = 'https://database-ecommerce-production.up.railway.app/'
   const {data: product, isLoading, isError} = useFetchOneProduct({URL:`${url}toys/${Params.id}`})
   return (
     <div>
