@@ -1,112 +1,140 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useOutletContext } from 'react-router-dom';
+import TextField from '@mui/material/TextField';
+import Cart from './Cart'
 
 const ProductItem: React.FC<{ product: any, url: string, multipleview: string }> = ({ product, url, multipleview }) => {
   const endPoint = encodeURI(product.image);
-  const [quantity, setQuantity] = useState<number>(0);
-  const {lineItems, setLineItems,setToggle, totalPrice,setTotalPrice, setAmountOfItems,} = useOutletContext<any>();
+  const [quantity, setQuantity] = useState<number>(1);
+  const { 
+    lineItems,
+    setLineItems, 
+    toggle, 
+    setToggle, 
+    totalPrice, 
+    setTotalPrice, 
+    setAmountOfItems
+   } = useOutletContext<any>();
+  const CartPopUpInterval = useRef(0);
 
-  const handleNumberOfItem = (e: any) => {
+  const handleQuantity = (e: any) => {
     setQuantity(e.target.value);
   }
-
-  const handleIncrementQuantity = () => {
-    setQuantity(quantity + 1);
-  }
-  const handleDecrementQuantity = () => {
-    if (quantity > 0) { setQuantity(quantity - 1); }
-    else { setQuantity(0) };
-  }
-  const handleAddToCart = () =>{
+  const handleAddToCart = () => {
     setToggle(true);
-    setAmountOfItems((amount:any) => amount + quantity)
-    let isExist = lineItems.some((element:any) => element.product._id == product._id);
-    if(!isExist){
-        setTotalPrice((totalPrice:any) => totalPrice + product.price * quantity);
-        setLineItems([...lineItems, {product: product, quantity: quantity}]);
+    setAmountOfItems((amount: number) => amount + Number(quantity));
+    let isExist = lineItems.some((element: any) => element.product._id == product._id);
+    if (!isExist) {
+      setTotalPrice((totalPrice: any) => totalPrice + product.price * Number(quantity));
+      setLineItems([...lineItems, { product: product, quantity: Number(quantity) }]);
 
     } else {
-        setLineItems(lineItems.map((order : any)=>{
-          if(order.product._id == product._id){
-            setTotalPrice(totalPrice + order.product.price*quantity);
-            return ({...order, quantity: order.quantity + quantity});
-          } else {
-            return order;
-          }
-        }))
+      setLineItems(lineItems.map((order: any) => {
+        if (order.product._id == product._id) {
+          setTotalPrice(totalPrice + order.product.price * quantity);
+          return ({ ...order, quantity: Number(order.quantity) + Number(quantity) });
+        } else {
+          return order;
+        }
+      }))
     }
-    console.log(lineItems)
-  } 
+
+    //scroll to top
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+
+    //set timeout to show Cart popup
+    clearInterval(CartPopUpInterval.current);
+    CartPopUpInterval.current = setTimeout(() => {
+      setToggle(false);
+    }, 3000);
+
+  }
 
   return (
     <ProductBox className={multipleview === 'true' ? undefined : 'singlebox'}>
       <ProductImage src={`${url}uploads/${endPoint}`} alt='imageproduct' className={multipleview === 'true' ? undefined : 'singleMode'} />
       <div>
         <ProductName>
-          {product.title.length <= 18 ? product.title : <span>{product.title.substring(0, 15)}...</span>} {product.quantity <= 0 && <span style={{ color: 'red', fontSize: 14 }}>Out-of-stock</span>}
+          {product.title.length <= 18 ? product.title : <span>{product.title.substring(0, 15)}...</span>}
+          {product.quantity <= 0 && <span style={{ color: 'red', fontSize: 14 }}>Out-of-stock</span>}
           {product.title.length > 18 && <Tooltip className='Tooltip'>{product.title}</Tooltip>}
         </ProductName>
-        {multipleview === 'false' && <ProductDescription rows= {5} readOnly>{product.description}</ProductDescription>}
-        <p>Price:  {product.price} kr</p>
-        <p>Age: {product.forObject}</p>
-
+        {multipleview === 'false'
+          && <ProductDescription readOnly>{product.description}</ProductDescription>}
+        <ProductOtherInfo>Price:  {product.price} kr</ProductOtherInfo>
+        <ProductOtherInfo>Age: {product.forObject}</ProductOtherInfo>
         {multipleview === 'true'
           && (<>
             <br />
-            <Link to={`/products/${product._id}`}>Read more...</Link>
-            <br />
+            <ReadmoreLink to={`/products/${product._id}`}>Read more...</ReadmoreLink>
           </>)}
-        <QuantitySection className={multipleview === 'true' ? undefined : 'QuantitySingleView'}>
-          <ChangeQuantityBtn onClick={handleIncrementQuantity}>+</ChangeQuantityBtn>
-          <QuantityField type='text' value={quantity} onChange={handleNumberOfItem}></QuantityField>
-          <ChangeQuantityBtn onClick={handleDecrementQuantity}>-</ChangeQuantityBtn>
-        </QuantitySection>
-        <AddToCartBtn onClick={handleAddToCart}>Add to cart</AddToCartBtn>
+        <AddToCart>
+          <TextField
+            id="standard-number"
+            type="number"
+            value={quantity}
+            onChange={handleQuantity}
+            color='secondary'
+            variant="standard"
+            sx={{ width: '8ch' }}
+            inputProps={{ min: 1, style: {color: '#1177a6'} }} // Set the min attribute to 1
+            className={multipleview === 'true' ? undefined : 'QuantitySingleView'}
+          />
+          <AddToCartBtn onClick={handleAddToCart}>Add to cart</AddToCartBtn>
+        </AddToCart>
       </div>
+      {toggle && <Cart/>}
     </ProductBox>
   )
 }
 const ProductBox = styled.div`
-width: 300px;
+width: 250px;
 padding: 15px 15px 0 15px;
 background-color:#d6edf5;
 border: 1px solid #d6edf5;
 border-radius: 2px;
-text-align: center;
+text-align: left;
 color: #1177a6; 
-font-size: 1.1rem;
-line-height: 0.5rem;
+font-size: 1rem;
+box-shadow: 5px 10px 18px #888888;
 &.singlebox{
   display: flex;  
   flex-direction: row;
-  justify-content: space-evenly;
-  column-gap:20px;
+  column-gap: 30px;
   width: unset;
   text-align: left;
-  font-size: 1.5rem;
+  padding-left: 40px;
+  padding-bottom: 40px;
+  font-size: 1rem;
   line-height: 1rem;
-  border-bottom: 1.5px solid;
-  border-top: 1.5px solid;
+  background-color: white;
+  
 };
+
 `
 
-const ProductName = styled.h2`
+const ProductName = styled.p`
 position: relative;
 &:hover .Tooltip {
   visibility: visible;
 }
 `
 
-const ProductDescription = styled.textarea`
-background-color: #d6edf5;
-border:none;
-font-size: 1.3rem;
-overflow: auto;
+const ProductOtherInfo = styled.p`
+font-size: 0.9rem;`
+
+const ReadmoreLink = styled(Link)`
+font-size: 0.9rem;
 color: #1177a6;
-width: 580px;
-resize:none;
+`
+
+const ProductDescription = styled.textarea`
+color: #1177a6;
+border:none;
+font-size: 1rem;
+overflow: auto;
 overflow:auto;
 &:focus{
   outline:none;
@@ -115,68 +143,46 @@ overflow:auto;
 
 const Tooltip = styled.span`
 visibility: hidden;
-width: 500px;
+width: 300px;
 margin: 2px;
 line-height: 1.5rem;
-background-color:white;
+background-color:lightgray;
 color: #1177a6;
 font-size: 1rem;
 font-weight: 400;
-text-align: center;
+text-align: left;
 border-radius: 6px;
 padding-left: 0; 
 position: absolute;
 z-index:1;
-top: 20px;
-left: 30%;
-
+top: 15px;
+left: 0;
 `
 
 
 
 const ProductImage = styled.img`
-width: 300px;
-height: 300px;
+width: 200px;
+height: 200px;
 object-fit: cover;
 &.singleMode{
-  width: 580px;
-  height: 580px;
+  width: 300px;
+  height: 300px;
 }`
 
 const AddToCartBtn = styled.button`
 background-color:unset;
 color:#1177a6;
-font-size: 1.25rem;
-padding: 7px 5px 7px 0;
-border:none;
+font-size: 1rem;
+border: none;
 &:focus{
   outline: none;
-}`
+};
+`
 
-const ChangeQuantityBtn = styled.button`
-border: none;
-padding: 4px;
-background-color: unset;
-font-size: 1.7rem;
-&:focus{
-  outline: none
-};`
-
-const QuantityField = styled.input`
-width: 45px;
-padding: 6px 4px;
-border: 1.5px;
-text-align: center;
-font-size: 1.1rem; `
-
-const QuantitySection = styled.div`
-margin: 10px 0;
+const AddToCart = styled.div`
+margin-top: 10px;
 display: flex;
 flex-direction: row;
-justify-content: center;
-align-items: center;
-padding-left: 0;
-&.QuantitySingleView{
-  justify-content: left;
-}`
+justify-content: space-between;`
 export default ProductItem

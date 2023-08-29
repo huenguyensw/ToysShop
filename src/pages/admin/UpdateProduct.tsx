@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const UpdateProduct: React.FC = () => {
-  const url = 'https://database-ecommerce-production.up.railway.app/';
+  const url = 'http://localhost:3000/';
   const Params = useParams();
   const { data: product, isLoading, isError } = useFetchOneProduct({ URL: `${url}toys/${Params.id}` })
   const [inputs, setInputs] = useState<any>();

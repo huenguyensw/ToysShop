@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import styled from 'styled-components'
-import Cart from '../components/Cart'
 
 
 const Root: React.FC = () => {
@@ -11,13 +10,14 @@ const Root: React.FC = () => {
   const [totalPrice, setTotalPrice] = useState(0); 
   const [toggle, setToggle] = useState(false); //show and hide shoppingcart popup when click 'Add to cart' button
   const [isDisplayCart, setIsDisplayCart] = useState(true); // display/hide cart icon on Header
-  const [amountOfItems, setAmountOfItems] = useState(null);
+  const [amountOfItems, setAmountOfItems] = useState<number>(0);
+  const [isMiniCart, setIsMiniCart] = useState(true);
+
   
   return (
     <Main>
-        <Header amount={amountOfItems} toggle={toggle} setToggle={setToggle}/>
-        <Outlet context={{lineItems,setLineItems, totalPrice, setTotalPrice, toggle, setToggle, isDisplayCart, setIsDisplayCart, setAmountOfItems}}/>
-        {toggle&&<Cart lineItems={lineItems} totalPrice={totalPrice} setLineItems={setLineItems} setToggle={setToggle} setAmountOfItems={setAmountOfItems}/>}
+        <Header amount={amountOfItems} toggle={toggle} setToggle={setToggle} isDisplayCart={isDisplayCart} setIsDisplayCart={setIsDisplayCart} setIsMiniCart={setIsMiniCart} />
+        <Outlet context={{lineItems,setLineItems, totalPrice, setTotalPrice, toggle, setToggle, isDisplayCart, setIsDisplayCart, setAmountOfItems, isMiniCart, setIsMiniCart}}/>
         <Footer/>
     </Main>
   )
@@ -30,6 +30,5 @@ grid-template-areas:
  "body"
  "footer";
  overflow-x:hidden;`
-
 
 export default Root

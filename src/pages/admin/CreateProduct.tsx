@@ -9,7 +9,7 @@ const CreateProduct: React.FC = () => {
   
   
   const [inputs, setInputs] = useState<any>({});
-  const URL = 'https://database-ecommerce-production.up.railway.app/toys';
+  const URL = 'http://localhost:3000/toys';
   const [image, setImage] = useState<any>('');
   const navigate = useNavigate();
 
